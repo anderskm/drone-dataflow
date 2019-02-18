@@ -317,7 +317,8 @@ function plotReviewGCPpreview(handles)
     markerIDs = getappdata(handles.figure,'markerIDs');
     selectedGCPidx = get(handles.review.GCPlistbox,'Value');
     axes(handles.review.GCPpreview);
-    I = imread(['C:\gitlab\drone-dataflow\Images\GCP' num2str(markerIDs(selectedGCPidx)) '.png']);
+%     I = imread(['C:\gitlab\drone-dataflow\Images\GCP' num2str(markerIDs(selectedGCPidx)) '.png']);
+    I = imread(fullfile(droneDataflowPath( ), 'common','GCP','Images',['GCP' num2str(markerIDs(selectedGCPidx)) '.png']));
     imshow(I);
 end
 
