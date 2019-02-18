@@ -2,7 +2,7 @@ function [ cameraModels ] = listCameraModels( )
 %LISTCAMERAMODELS Summary of this function goes here
 %   Detailed explanation goes here
 
-    cameraFolder = fullfile(droneDataflowPath( ), 'MATLAB','common','cameras');
+    cameraFolder = fullfile(droneDataflowPath( ), 'common','cameras');
     
     files = dir(fullfile(cameraFolder,'*.mat'));
     

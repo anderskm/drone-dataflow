@@ -8,7 +8,7 @@ function [ path ] = droneDataflowPath( )
 %     path = fullfile(pathParts{1:end-3});
 
     % Remove droneDataflowPath, common and MATLAB
-    for i = 1:3
+    for i = 1:2
         [path, ~, ~] = fileparts(path);
     end;
 
