@@ -9,6 +9,7 @@ Drone Dataflow - A MATLAB toolbox for processing images captured by a UAV
     * Statistics and Machine Learning Toolbox
     * Aerospace Toolbox
 * ExifTool (https://www.sno.phy.queensu.ca/~phil/exiftool/)
+    * **Note**: ExifTool is used for reading metadata from the images. E.g. GPS position.
 
 ## Installation
 1. Download and unzip the toolbox: https://github.com/anderskm/drone-dataflow/archive/master.zip
