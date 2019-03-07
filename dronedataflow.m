@@ -1,6 +1,8 @@
 function dronedataflow
 
     %% Setup
+    % Add drone dataflow functions to MATLAB path
+    addpath(genpath('common'))
     
     % Create struct with GUI elements (tabs, descriptions and buttons)
     GUIstruct.name = 'Process single flight';
