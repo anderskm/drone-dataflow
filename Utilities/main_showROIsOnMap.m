@@ -82,4 +82,5 @@ for r = 1:length(ROIs)
     plot([X X(1)],[Y Y(1)],'-','color',cmap(r,:),'LineWidth',ROIlinewidth);
     text(mean(X),mean(Y),ROIs(r).name,'VerticalAlignment','middle','HorizontalAlignment','center','Background',cmap(r,:));
 end
+axis equal
 disp('Done!');
