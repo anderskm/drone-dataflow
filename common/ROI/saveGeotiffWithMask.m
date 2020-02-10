@@ -49,6 +49,12 @@ function saveGeotiffWithMask( outputFilepath, Icut, Imask, mapTransformationROI,
         error(['Size of 3rd dimension handle is unknown. Image size  [' num2str(size(Icut)) ']'])
     end
     
+    % Hack. Wrong field names will cause error. "Unknown" is the only known
+    % wrong field name.
+    if (isfield(GeoKeyDirectoryTag,'Unknown'))
+        GeoKeyDirectoryTag = rmfield(GeoKeyDirectoryTag,'Unknown');
+    end
+    
     if (isIndex) && (saveAsPseudoColor)
         saveGeotiff_index_pseudo( outputFilepath, Icut2, Imask, mapTransformationROI, GeoKeyDirectoryTag, pseudoColormap, mapMin, mapMax);
     elseif (isIndex) && (~saveAsPseudoColor)
