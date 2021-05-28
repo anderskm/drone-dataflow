@@ -137,7 +137,7 @@ end
 
 %% Export to xlsx (RIGHT)
 name_parts = strsplit(xlsROIfile,'.');
-output_filename = fullfile(xlsROIfolder, [name_parts{1} '__RIGHT.' name_parts{2}]);
+output_filename = fullfile(xlsROIfolder, [name_parts{1} '__RIGHT__M_' num2str(margin) '_W_' num2str(width) '.' name_parts{2}]);
 
 A = {'Version',ROIheader.Version;
      'Name', [ROIheader.Name '__RIGHT'];
@@ -185,7 +185,7 @@ xlswrite(output_filename, A, ['A11:D' num2str(size(A,1)+10)]);
 
 %% Export to xlsx (LEFT)
 name_parts = strsplit(xlsROIfile,'.');
-output_filename = fullfile(xlsROIfolder, [name_parts{1} '__LEFT.' name_parts{2}]);
+output_filename = fullfile(xlsROIfolder, [name_parts{1} '__LEFT__M_' num2str(margin) '_W_' num2str(width) '.' name_parts{2}]);
 
 A = {'Version',ROIheader.Version;
      'Name', [ROIheader.Name '__LEFT'];
