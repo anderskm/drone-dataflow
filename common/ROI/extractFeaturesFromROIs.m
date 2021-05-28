@@ -20,7 +20,7 @@ function [ ROIs ] = extractFeaturesFromROIs( ROIs, featureHandles, featureNames,
             ImaskEroded = imerode(Imask, strel('disk',round(edge/mapTransformationROI.CellExtentInWorldX)));
             for f = 1:length(featureHandles)
                 featureHandle = featureHandles{f};
-                feature = feval(featureHandle, double(Iroi), ImaskEroded, mapTransformationROI);
+                feature = feval(featureHandle, Iroi, ImaskEroded, mapTransformationROI);
                 if (isempty(feature))
                     feature = NaN;
                 end
