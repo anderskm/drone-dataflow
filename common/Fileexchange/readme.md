@@ -19,3 +19,9 @@ Link: [http://mathworks.com/matlabcentral/fileexchange/27627-zoharby-plot-google
 Assignment algorithm for assigning 
 
 Link: [https://mathworks.com/matlabcentral/fileexchange/20652-hungarian-algorithm-for-linear-assignment-problems--v2-3-](https://mathworks.com/matlabcentral/fileexchange/20652-hungarian-algorithm-for-linear-assignment-problems--v2-3-)
+
+# Function: haralickTextureFeatures
+
+For calculating the Haralick texture features from a gray level co-occurance matrix. 
+
+Link: [https://mathworks.com/matlabcentral/fileexchange/58769-haralicktexturefeatures](https://mathworks.com/matlabcentral/fileexchange/58769-haralicktexturefeatures)
