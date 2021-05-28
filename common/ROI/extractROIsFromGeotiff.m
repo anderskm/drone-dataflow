@@ -21,21 +21,50 @@ function [ ROIs ] = extractROIsFromGeotiff( mapFilePath, ROIs, ROIheader, vararg
     
     verbose = p.Results.verbose;
     numDisplaySpaces = (verbose-1)*3;
-
-    % Load map(s)
-    if (verbose)
-        dispts(['Loading map: ' mapFilePath], numDisplaySpaces);
-    end
-    [map, ~] = geotiffread(mapFilePath);
-    [mapInfo] = geotiffinfo(mapFilePath);
     
-    % Extracting ROIs from map
-    if (verbose)
-        dispts('Extracting ROIs from map...', numDisplaySpaces);
+    % Check if all ROIs exist. If they do, don't load map and extract them again
+    [mapPath,mapFilename,~] = fileparts(mapFilePath);
+    [~, ROIfilename, ~] = fileparts(ROIheader.Source.File);
+    ROImapsFolder = fullfile(mapPath, 'ROIs', ROIfilename);
+    ROIs_exist = zeros(size(ROIs));
+    for r = 1:length(ROIs)
+        ROIfilename = fullfile(ROImapsFolder,'raw', [mapFilename '_ROI_' ROIs(r).name{1} '.tif']);
+        ROIs_exist(r) = exist(ROIfilename, 'file');
     end
-%     [ROIsMap] = extractROIsFromMap( map, mapInfo, ROIs, featureHandles, 'edges', edges, 'featureNames', featureNames, 'verbose', sign(verbose)*(verbose+1));
-    [ROIsMap] = extractROIsFromMap( map, mapInfo, ROIs, 'verbose', sign(verbose)*(verbose+1));
-    clear map;
+    
+    if all(ROIs_exist) && isempty(refMapFile)
+        dispts(['ROIs already extracted. Skip loading map, and loading extracted ROIs instead.'], numDisplaySpaces)
+        saveROIs = false;
+        tic;
+        ROIsMap = ROIs;
+        for r = 1:length(ROIs)
+            ROIfilename = fullfile(ROImapsFolder,'raw', [mapFilename '_ROI_' ROIs(r).name{1} '.tif']);
+            roi_info = geotiffinfo(ROIfilename);
+            IroiGeotiff = geotiffread(ROIfilename);
+            Iroi = IroiGeotiff(:,:,1:end-1);
+            Imask = logical(IroiGeotiff(:,:,end));
+            ROIsMap(r).Iroi = Iroi;
+            ROIsMap(r).Imask = Imask;
+            ROIsMap(r).mapTransformationROI = roi_info.SpatialRef;
+        end
+        clear roi_info IroiGeotiff Iroi Imask;
+        toc
+    else
+        % Load map(s)
+        if (verbose)
+            dispts(['Loading map: ' mapFilePath], numDisplaySpaces);
+        end
+        [map, ~] = geotiffread(mapFilePath);
+        [mapInfo] = geotiffinfo(mapFilePath);
+
+        % Extracting ROIs from map
+        if (verbose)
+            dispts('Extracting ROIs from map...', numDisplaySpaces);
+        end
+    %     [ROIsMap] = extractROIsFromMap( map, mapInfo, ROIs, featureHandles, 'edges', edges, 'featureNames', featureNames, 'verbose', sign(verbose)*(verbose+1));
+        [ROIsMap] = extractROIsFromMap( map, mapInfo, ROIs, 'verbose', sign(verbose)*(verbose+1));
+        clear map;
+    end
     
     % Load reference map
     if (isempty(refMapFile))
@@ -144,7 +173,7 @@ function [ ROIs ] = extractROIsFromGeotiff( mapFilePath, ROIs, ROIheader, vararg
         % Get GeoKeyDirectoryTag from original map
         info = geotiffinfo(mapFilePath);
         GeoKeyDirectoryTag = info.GeoTIFFTags.GeoKeyDirectoryTag;
-        
+               
         % Loop throug ROIs
         for r = 1:length(ROIs)
             % Save ROIs as small geotiff
