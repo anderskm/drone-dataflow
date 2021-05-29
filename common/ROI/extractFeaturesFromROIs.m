@@ -8,6 +8,7 @@ function [ ROIs ] = extractFeaturesFromROIs( ROIs, featureHandles, featureNames,
     end
 
     % Loop over ROIs
+    progBar = ProgressBar(length(ROIs), 'Title','Extracting features from ROIs', 'UpdateRate', 1, 'UseUnicode', false);
     for r = 1:length(ROIs)
         Iroi = ROIs(r).Iroi;
         Imask = ROIs(r).Imask;
@@ -42,6 +43,9 @@ function [ ROIs ] = extractFeaturesFromROIs( ROIs, featureHandles, featureNames,
         ROIs(r).edgesApplied = edgesApplied;
         ROIs(r).edgesSpecified = edges;
 
+        
+        progBar([],[],[]);
     end
+    progBar.release();
 
 end

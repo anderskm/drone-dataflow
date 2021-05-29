@@ -25,3 +25,9 @@ Link: [https://mathworks.com/matlabcentral/fileexchange/20652-hungarian-algorith
 For calculating the Haralick texture features from a gray level co-occurance matrix. 
 
 Link: [https://mathworks.com/matlabcentral/fileexchange/58769-haralicktexturefeatures](https://mathworks.com/matlabcentral/fileexchange/58769-haralicktexturefeatures)
+
+# Function: ProgressBar
+
+Show a progress bar in the command window
+
+Link: [https://github.com/JAAdrian/MatlabProgressBar](https://github.com/JAAdrian/MatlabProgressBar)

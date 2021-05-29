@@ -33,10 +33,11 @@ function [ ROIs ] = extractROIsFromGeotiff( mapFilePath, ROIs, ROIheader, vararg
     end
     
     if all(ROIs_exist) && isempty(refMapFile)
-        dispts(['ROIs already extracted. Skip loading map, and loading extracted ROIs instead.'], numDisplaySpaces)
+        dispts(['ROI images already extracted. Loading previously extracted ROI images instead of extracting them again.'], numDisplaySpaces)
         saveROIs = false;
-        tic;
         ROIsMap = ROIs;
+%         for r = 1:length(ROIs)
+        progBar = ProgressBar(length(ROIs), 'Title','Loading ROI images', 'UpdateRate', 1, 'UseUnicode', false);
         for r = 1:length(ROIs)
             ROIfilename = fullfile(ROImapsFolder,'raw', [mapFilename '_ROI_' ROIs(r).name{1} '.tif']);
             roi_info = geotiffinfo(ROIfilename);
@@ -46,9 +47,10 @@ function [ ROIs ] = extractROIsFromGeotiff( mapFilePath, ROIs, ROIheader, vararg
             ROIsMap(r).Iroi = Iroi;
             ROIsMap(r).Imask = Imask;
             ROIsMap(r).mapTransformationROI = roi_info.SpatialRef;
+            progBar([],[],[]);
         end
         clear roi_info IroiGeotiff Iroi Imask;
-        toc
+        progBar.release();
     else
         % Load map(s)
         if (verbose)
@@ -58,9 +60,6 @@ function [ ROIs ] = extractROIsFromGeotiff( mapFilePath, ROIs, ROIheader, vararg
         [mapInfo] = geotiffinfo(mapFilePath);
 
         % Extracting ROIs from map
-        if (verbose)
-            dispts('Extracting ROIs from map...', numDisplaySpaces);
-        end
     %     [ROIsMap] = extractROIsFromMap( map, mapInfo, ROIs, featureHandles, 'edges', edges, 'featureNames', featureNames, 'verbose', sign(verbose)*(verbose+1));
         [ROIsMap] = extractROIsFromMap( map, mapInfo, ROIs, 'verbose', sign(verbose)*(verbose+1));
         clear map;
@@ -175,13 +174,17 @@ function [ ROIs ] = extractROIsFromGeotiff( mapFilePath, ROIs, ROIheader, vararg
         GeoKeyDirectoryTag = info.GeoTIFFTags.GeoKeyDirectoryTag;
                
         % Loop throug ROIs
+        progBar = ProgressBar(length(ROIs), 'Title','Saving ROIs', 'UpdateRate', 1, 'UseUnicode', false);
         for r = 1:length(ROIs)
             % Save ROIs as small geotiff
             ROIfilename = fullfile(ROImapsFolder,'pseudo', [mapFilename '_ROI_' ROIs(r).name{1} '.tif']);
             saveGeotiffWithMask( ROIfilename, ROIs(r).Iroi, ROIs(r).Imask, ROIs(r).mapTransformationROI, GeoKeyDirectoryTag,'Range',range,'saveAsPseudoColor',true);
             ROIfilename = fullfile(ROImapsFolder,'raw', [mapFilename '_ROI_' ROIs(r).name{1} '.tif']);
             saveGeotiffWithMask( ROIfilename, ROIs(r).Iroi, ROIs(r).Imask, ROIs(r).mapTransformationROI, GeoKeyDirectoryTag,'Range',range,'saveAsPseudoColor',false);
+            
+            progBar([],[],[]);
         end
+        progBar.release();
         
         % Save legend
         if (~isempty(ROIcolormap))

@@ -41,16 +41,19 @@ function [ ROIs] = extractROIsFromMap( map, mapInfo, ROIs, varargin )
 %     end;
 
     if (verbose)
-        dispts('Extracting extracting features from ROIs...', numDisplaySpaces);
+        dispts('Extracting ROIs from map...', numDisplaySpaces);
     end;
+    progBar = ProgressBar(length(ROIs), 'Title','Extracting ROIs from map', 'UpdateRate', 1, 'UseUnicode', false);
     for r = 1:length(ROIs)
         ROI = ROIs(r);
-        if (verbose)
-            dispts(['ROI (' num2str(r) '/' num2str(length(ROIs)) '): ' ROI.name{1}] , numDisplaySpaces);
-        end;
+%         if (verbose)
+%             dispts(['ROI (' num2str(r) '/' num2str(length(ROIs)) '): ' ROI.name{1}] , numDisplaySpaces);
+%         end;
         
         mstruct = geotiff2mstruct(mapInfo);
         [X, Y, Z] = mfwdtran(mstruct, ROI.latitude, ROI.longitude, ROI.altitude);
+%         X = ROI.X;
+%         Y = ROI.Y;
         
         % Extract neighbourhood (50 * GSD)
         [X2,Y2] = polygrow(X,Y, mapInfo.SpatialRef.CellExtentInWorldX*50);
@@ -66,6 +69,11 @@ function [ ROIs] = extractROIsFromMap( map, mapInfo, ROIs, varargin )
         else
             [ Iroi, Imask, mapTransformationROI, ~ ] = mapcrop( MapNeighborhood, mapROIrasterRefNeighborhood, X, Y );
         end
+        
+%         % TESTING: REMOVE!!!
+%         Iroi = MapNeighborhood;
+%         Imask = MapMaskNeighborhood;
+%         mapTransformationROI = mapROIrasterRefNeighborhood;
         
         tic;
         % Estimate local bias
@@ -95,7 +103,9 @@ function [ ROIs] = extractROIsFromMap( map, mapInfo, ROIs, varargin )
         ROIs(r).mapROIrasterRefNeighborhood = mapROIrasterRefNeighborhood;
         ROIs(r).localBias = localBias;
         
-    end;
+        progBar([],[],[]);
+    end
+    progBar.release();
     
     if (verbose)
         dispts('ROIs extracted!', numDisplaySpaces);
