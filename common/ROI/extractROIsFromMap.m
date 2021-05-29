@@ -54,20 +54,29 @@ function [ ROIs] = extractROIsFromMap( map, mapInfo, ROIs, varargin )
         [X, Y, Z] = mfwdtran(mstruct, ROI.latitude, ROI.longitude, ROI.altitude);
 %         X = ROI.X;
 %         Y = ROI.Y;
-        
-        % Extract neighbourhood (50 * GSD)
-        [X2,Y2] = polygrow(X,Y, mapInfo.SpatialRef.CellExtentInWorldX*50);
-        [MapNeighborhood, MapMaskNeighborhood, mapROIrasterRefNeighborhood, ~] = mapcrop(map, mapInfo.SpatialRef, X2, Y2);
-        
-        if (~isempty(newMapRasterRef))
-            % Map neihgbourhood into same raster coordinate system as
-            % new map raster reference
-            MapNeighbourhoodRemapped = remapmap(MapNeighborhood, mapROIrasterRefNeighborhood, ROIs(r).mapROIrasterRefNeighborhood); %, size(MapNeighborHood), class(MapNeighborHood));
-            
-            % Extract ROI
-            [ Iroi, Imask, mapTransformationROI, ~ ] = mapcrop( MapNeighbourhoodRemapped, ROIs(r).mapROIrasterRefNeighborhood, X, Y );
-        else
-            [ Iroi, Imask, mapTransformationROI, ~ ] = mapcrop( MapNeighborhood, mapROIrasterRefNeighborhood, X, Y );
+        try
+            % Extract neighbourhood (50 * GSD)
+            [X2,Y2] = polygrow(X,Y, mapInfo.SpatialRef.CellExtentInWorldX*50);
+            [MapNeighborhood, MapMaskNeighborhood, mapROIrasterRefNeighborhood, ~] = mapcrop(map, mapInfo.SpatialRef, X2, Y2);
+
+            if (~isempty(newMapRasterRef))
+                % Map neihgbourhood into same raster coordinate system as
+                % new map raster reference
+                MapNeighbourhoodRemapped = remapmap(MapNeighborhood, mapROIrasterRefNeighborhood, ROIs(r).mapROIrasterRefNeighborhood); %, size(MapNeighborHood), class(MapNeighborHood));
+
+                % Extract ROI
+                [ Iroi, Imask, mapTransformationROI, ~ ] = mapcrop( MapNeighbourhoodRemapped, ROIs(r).mapROIrasterRefNeighborhood, X, Y );
+            else
+                [ Iroi, Imask, mapTransformationROI, ~ ] = mapcrop( MapNeighborhood, mapROIrasterRefNeighborhood, X, Y );
+            end
+        catch ME
+            progBar.release()
+            ProgressBar.deleteAllTimers();
+            warnStruct = warning;
+            warning on;
+            warning(['Could not extract ROI (Name: ' ROI.name{1} ') from map.']);
+            warning(warnStruct);
+            rethrow(ME)
         end
         
 %         % TESTING: REMOVE!!!

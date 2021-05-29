@@ -72,11 +72,11 @@ function [ mapOut, mapOutMask, mapRasterRefOut, mapRect ] = mapcrop( mapIn, mapR
 %             end
         end
     catch ME
-        disp(size(mapIn));
-        disp(size(mapOut));
-        disp(mapRect);
-        disp([i j]);
-        rethrow(ME)
+        if (strcmp(ME.identifier, 'MATLAB:badsubscript'))
+            error('mapcrop:PolygonOutsideMap','All vertices of the polygon must be located inside the map limits.')
+        else
+            rethrow(ME)
+        end
     end
     
 %     % Crop each channel and store in cell array
