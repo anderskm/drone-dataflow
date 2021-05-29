@@ -10,7 +10,7 @@ function [ ROIs ] = extractFeaturesFromROIs( ROIs, featureHandles, featureNames,
     global intermediate_results;
 
     % Loop over ROIs
-    progBar = ProgressBar(length(ROIs), 'Title','Extracting features from ROIs', 'UpdateRate', 1, 'UseUnicode', false);
+    progBar = ProgressBar(length(ROIs), 'Title','Extracting features', 'UpdateRate', 1, 'UseUnicode', false);
     for r = 1:length(ROIs)
         Iroi = ROIs(r).Iroi;
         Imask = ROIs(r).Imask;
