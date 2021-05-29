@@ -2,8 +2,11 @@ function exportROIs2xls(xlsFilename, xlsSheet, ROIsExtracted)
 %EXPORTROIS2XLS Summary of this function goes here
 %   Detailed explanation goes here
 
+    xlsSheet = xlsSheet(1:min(31, length(xlsSheet)));
+
     [headers, ROInames, featureMatrix] = ROIs2mats(ROIsExtracted);
 
+    
     % Write headers
     xlswrite(xlsFilename, {'Specified edges (m)';'Applied edges (m)';'Feature handles'; 'ROI names\ Feature names'}, xlsSheet, 'A1:A4');
     xlswrite(xlsFilename, headers, xlsSheet, 'B1');
