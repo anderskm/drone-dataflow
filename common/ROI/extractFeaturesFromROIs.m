@@ -6,6 +6,8 @@ function [ ROIs ] = extractFeaturesFromROIs( ROIs, featureHandles, featureNames,
     if (nargin < 4)
         edges = 0;
     end
+    
+    global intermediate_results;
 
     % Loop over ROIs
     progBar = ProgressBar(length(ROIs), 'Title','Extracting features from ROIs', 'UpdateRate', 1, 'UseUnicode', false);
@@ -19,14 +21,18 @@ function [ ROIs ] = extractFeaturesFromROIs( ROIs, featureHandles, featureNames,
         for e = 1:length(edges)
             edge = edges(e);
             ImaskEroded = imerode(Imask, strel('disk',round(edge/mapTransformationROI.CellExtentInWorldX)));
+            intermediate_results = struct();
             for f = 1:length(featureHandles)
                 featureHandle = featureHandles{f};
+%                 feature = featureHandle(Iroi, ImaskEroded, mapTransformationROI);
                 feature = feval(featureHandle, Iroi, ImaskEroded, mapTransformationROI);
                 if (isempty(feature))
                     feature = NaN;
                 end
                 features(e, f) = feature;
             end;
+            struct_field_names = fieldnames(intermediate_results);
+            intermediate_results = rmfield(intermediate_results, struct_field_names);
         end;
         
         % Calculate the actual size of the edges based on the ground
